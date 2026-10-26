@@ -1,0 +1,1322 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>업무 자동화 4주 학습서</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: 왼쪽 목차 + 한 번에 한 장(章)만 보이는 책. 위쪽 바에 진행률과 '오늘' 버튼. */
+:root{
+  --bg:#F3F5F4; --surface:#FFFFFF; --fg:#1B2328; --muted:#566369; --line:#D8DEDC;
+  --accent:#1D5C8A; --accent-soft:#E0ECF4; --code-bg:#E8EDED; --mark:#FFF0BE; --ok:#2E7D5B;
+  --serif:"Gowun Batang","Noto Serif KR","Batang",serif;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Consolas,monospace;
+  --gutter-l:max(16px,env(safe-area-inset-left,0px));
+  --gutter-r:max(16px,env(safe-area-inset-right,0px));
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12181B; --surface:#1A2226; --fg:#E3E9E7; --muted:#9AA8AE; --line:#2B363B;
+  --accent:#7DB8E0; --accent-soft:#1E3441; --code-bg:#0E1417; --mark:#3B3517; --ok:#6CC49B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12181B; --surface:#1A2226; --fg:#E3E9E7; --muted:#9AA8AE; --line:#2B363B;
+  --accent:#7DB8E0; --accent-soft:#1E3441; --code-bg:#0E1417; --mark:#3B3517; --ok:#6CC49B; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.8;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;gap:12px;min-height:56px;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
+.brand{font-family:var(--serif);font-weight:700;font-size:1.05rem;margin-right:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu{display:none;border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:6px;cursor:pointer}
+.prog{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.prog b{color:var(--fg)}
+.pill{border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);padding:5px 12px;border-radius:999px;font-size:.85rem;font-weight:500;cursor:pointer;white-space:nowrap}
+
+.shell{display:grid;grid-template-columns:260px minmax(0,1fr);gap:48px;max-width:1120px;margin:0 auto;padding-left:var(--gutter-l);padding-right:var(--gutter-r);padding-block:28px 64px}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);align-self:start;max-height:calc(100vh - 100px);overflow:auto;min-width:0}
+.nav h4{margin:20px 0 6px;font-size:.72rem;letter-spacing:.12em;color:var(--muted);font-weight:500}
+.nav h4:first-child{margin-top:0}
+.nav a{display:block;padding:8px 10px;margin:0 -10px;border-radius:6px;color:var(--fg);text-decoration:none;line-height:1.45}
+.nav a:hover{background:var(--accent-soft)}
+.nav a.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.nav small{display:block;color:var(--muted);font-size:.75rem;font-weight:400;font-variant-numeric:tabular-nums}
+
+main{min-width:0}
+.chapter{max-width:46rem}
+.eyebrow{display:inline-block;margin:0 0 10px;padding-top:10px;border-top:3px solid var(--accent);font-size:.8rem;letter-spacing:.14em;color:var(--accent);font-weight:700}
+.chapter h1{font-family:var(--serif);font-weight:700;font-size:clamp(1.8rem,4.4vw,2.5rem);line-height:1.3;margin:0 0 18px;text-wrap:balance}
+.chapter h1 + p{font-size:1.08rem;color:var(--muted)}
+.chapter h2{font-family:var(--serif);font-size:1.5rem;line-height:1.4;margin:3.2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--line);scroll-margin-top:calc(env(safe-area-inset-top,0px) + 76px);text-wrap:balance}
+.chapter h3{font-size:1.1rem;line-height:1.5;margin:2.2rem 0 .6rem;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 76px)}
+.chapter p{margin:0 0 1rem}
+.chapter ul,.chapter ol{padding-left:1.4rem;margin:0 0 1.1rem}
+.chapter li{margin:.25rem 0}
+.chapter strong{font-weight:700}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.1em .38em;border-radius:4px}
+pre{position:relative;margin:1rem 0 1.4rem;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;overflow-x:auto}
+pre code{display:block;background:none;padding:16px 18px;font-size:.84rem;line-height:1.7;white-space:pre;tab-size:4}
+.copy{position:absolute;top:6px;right:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:.72rem;padding:2px 8px;border-radius:4px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.chips button{border:1px solid var(--line);background:var(--surface);padding:5px 12px;border-radius:999px;font-size:.85rem;cursor:pointer}
+.chips button:hover{border-color:var(--accent);color:var(--accent)}
+
+.tablewrap{overflow-x:auto;margin:1rem 0 1.5rem;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem;line-height:1.6}
+th,td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-size:.78rem;letter-spacing:.06em;color:var(--muted);font-weight:700;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+table.day td:first-child{font-weight:700;white-space:nowrap;width:3.5rem}
+table.day td.done,table.day th:last-child{text-align:center;width:4.5rem}
+table.day tr:has(.chk:checked) td:not(.done){color:var(--muted)}
+tr.now td{background:var(--mark)}
+
+li.task{list-style:none;margin-left:-1.4rem}
+li.task label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;padding:6px 0}
+.chk{width:1.2rem;height:1.2rem;margin-top:.32rem;accent-color:var(--accent);flex:none;cursor:pointer}
+li.task .chk:checked + span{color:var(--muted);text-decoration:line-through}
+
+details{border:1px solid var(--line);background:var(--surface);border-radius:6px;margin:0 0 10px}
+summary{cursor:pointer;padding:12px 16px;font-weight:500;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";display:inline-block;width:1.2rem;color:var(--accent);font-weight:700}
+details[open] summary::before{content:"−"}
+details p{margin:0;padding:0 16px 14px 2.2rem;color:var(--muted)}
+
+.today{margin:26px 0 8px;padding:20px 22px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px}
+.today h2{all:unset;display:block;font-size:.78rem;letter-spacing:.12em;color:var(--accent);font-weight:700;margin-bottom:8px}
+.today .t-main{font-family:var(--serif);font-size:1.35rem;font-weight:700;line-height:1.4;margin:0 0 12px}
+.today dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0 0 14px}
+.today dt{color:var(--muted);font-size:.85rem;font-weight:700}
+.today dd{margin:0}
+.today .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.today .go{border:0;background:var(--accent);color:var(--bg);padding:8px 16px;border-radius:6px;font-weight:700;cursor:pointer}
+.today label{font-size:.85rem;color:var(--muted)}
+.today input[type=date]{font:inherit;font-size:.9rem;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:3.5rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+.pager button{flex:1 1 0;min-width:0;text-align:left;border:1px solid var(--line);background:var(--surface);padding:12px 16px;border-radius:6px;cursor:pointer;line-height:1.4}
+.pager button:last-child:not(:first-child){text-align:right}
+.pager small{display:block;color:var(--muted);font-size:.75rem}
+.pager button:hover{border-color:var(--accent)}
+
+@media (max-width:900px){
+  .shell{display:block;gap:0}
+  .menu{display:inline-block}
+  .side{display:none;position:fixed;inset:calc(env(safe-area-inset-top,0px) + 57px) 0 0 0;z-index:15;max-height:none;background:var(--bg);padding:20px var(--gutter-r) 40px var(--gutter-l)}
+  .side.open{display:block}
+  .prog .lbl{display:none}
+  table.day{display:block}
+  table.day thead{display:none}
+  table.day tbody,table.day tr{display:block}
+  table.day tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+  table.day tr:last-child{border-bottom:0}
+  table.day td{display:block;border:0;padding:2px 0;width:auto!important;text-align:left!important}
+  table.day td:first-child{font-size:1rem;color:var(--accent);padding-bottom:4px}
+  table.day td[data-label]:not(:first-child):not(.done)::before{content:attr(data-label);display:block;font-size:.72rem;color:var(--muted);font-weight:700;margin-top:6px}
+  table.day td.done{padding-top:8px}
+  table.day td.done::before{content:"완료 ";font-size:.8rem;color:var(--muted);margin-right:6px;vertical-align:middle}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+</head>
+<body>
+
+<header class="bar"><div class="bar-in">
+  <button class="menu" id="menuBtn" type="button" aria-expanded="false">목차</button>
+  <div class="brand">업무 자동화 4주</div>
+  <div class="prog" id="prog" aria-live="polite"></div>
+  <button class="pill" id="hdrToday" type="button">오늘</button>
+</div></header>
+<div class="shell">
+  <aside class="side" id="side"><nav class="nav"><h4>본문</h4>
+<a href="#start" data-id="start">시작하기<small data-count="start"></small></a>
+<a href="#week1" data-id="week1">1주차 · Python 기초와 엑셀 다루기<small data-count="week1"></small></a>
+<a href="#week2" data-id="week2">2주차 · pandas로 표 데이터 다루기<small data-count="week2"></small></a>
+<a href="#week3" data-id="week3">3주차 · 규칙 검사와 SQL 맛보기<small data-count="week3"></small></a>
+<a href="#week4" data-id="week4">4주차 · AI API로 자동화 완성하기<small data-count="week4"></small></a>
+<h4>부록</h4>
+<a href="#appA" data-id="appA">부록 A 머신러닝·딥러닝 한 장 정리<small data-count="appA"></small></a>
+<a href="#appB" data-id="appB">부록 B 용어 사전<small data-count="appB"></small></a></nav></aside>
+  <main><article class="chapter" id="ch-start" data-id="start" hidden><h1>시작하기</h1>
+<p>비전공자가 4주 동안 업무 자동화의 기본기를 쌓는 책입니다. Python으로 엑셀을 다루고, SQL로 데이터를 꺼내고, AI API로 문서 업무를 자동화하는 순서로 진행합니다. 매일 열어서 오늘 분량을 읽고, 실습하고, 체크하세요.</p><section class="today" id="today"></section>
+<h2 id="start-s0">이 책의 목표</h2>
+<p>4주 뒤 <strong>예산 엑셀 자동 점검기</strong>를 완성합니다. 사업별 예산·집행 엑셀을 읽어 집행률을 계산하고, 한도 초과와 증빙 누락 항목을 표시해 요약 파일과 메일 초안까지 만드는 프로그램입니다.</p>
+<p>코드를 처음부터 끝까지 외우는 것이 목표가 아닙니다. 자동화 기획자에게 필요한 것은 두 가지입니다.</p>
+<ul>
+<li>업무를 <strong>어떤 단계로 쪼개고 어디까지 자동화할지</strong> 정하는 판단력</li>
+<li>AI가 짜 준 코드를 <strong>읽고 검증할 수 있는</strong> 최소한의 이해</li>
+</ul>
+<h2 id="start-s1">4주 지도</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>주차</th>
+<th>주제</th>
+<th>주말에 손에 남는 결과물</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1주차</td>
+<td>Python 기초와 엑셀 다루기</td>
+<td>항목별 합계·집행률 엑셀</td>
+</tr>
+<tr>
+<td>2주차</td>
+<td>pandas로 표 데이터 다루기</td>
+<td>80% 미만·100% 초과에 색이 칠해진 집행률 엑셀</td>
+</tr>
+<tr>
+<td>3주차</td>
+<td>규칙 검사와 SQL 맛보기</td>
+<td>한도·증빙 점검 결과표, SQL 조회 연습</td>
+</tr>
+<tr>
+<td>4주차</td>
+<td>AI API로 자동화 완성</td>
+<td>담당자용 요약 메일 초안</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="start-s2">하루 공부 방법</h2>
+<p>평일 30~40분, 주말 1~2시간입니다. 같은 순서로 반복하면 부담이 줄어듭니다.</p>
+<ol>
+<li>이 책 첫 화면의 <strong>오늘 카드</strong>에서 오늘 할 이론과 실습을 확인합니다.</li>
+<li>해당 장의 <strong>개념 정리</strong>에서 오늘 주제만 읽습니다. 전부 읽을 필요는 없습니다.</li>
+<li><strong>실습</strong>을 손으로 해 봅니다. 복사해서 실행하고, 값을 바꿔 보고, 일부러 에러도 내 봅니다.</li>
+<li>코드를 Claude에게 보여 주며 <strong>"각 줄이 뭘 하는지 설명해 줘"</strong> 라고 묻습니다.</li>
+<li>체크박스에 표시합니다. 체크 상태는 이 브라우저에 저장됩니다.</li>
+</ol>
+<p>일요일에는 한 주를 정리하며 장 끝의 <strong>복습 질문</strong>을 풀어 보세요. 막히는 질문이 다음 주에 보충할 부분입니다.</p>
+<h2 id="start-s3">실습 환경 준비</h2>
+<p>한 번만 하면 됩니다. 모든 데이터는 연습용 가상 데이터입니다.</p>
+<ol>
+<li><strong>Python 설치 확인</strong>: 터미널(Windows는 명령 프롬프트)에서 <code>python --version</code>을 입력합니다. 버전이 나오면 설치된 것입니다. Windows에서 안 나오면 <code>py --version</code>을 시도하고, 그래도 안 되면 python.org에서 설치합니다. 설치 화면에서 <strong>Add python.exe to PATH</strong>를 꼭 체크하세요.</li>
+<li><strong>실습 폴더 풀기</strong>: 받은 <code>practice.zip</code>을 원하는 곳에 풉니다. <code>week1</code> ~ <code>week4</code> 폴더가 보이면 됩니다.</li>
+<li><strong>라이브러리 설치</strong>: 터미널에서 <code>pip install pandas openpyxl anthropic</code>을 실행합니다.</li>
+<li><strong>실행 방법</strong>: 터미널을 <code>practice</code> 폴더에서 열고 <code>python week1/make_sample.py</code>처럼 입력합니다.</li>
+</ol>
+<p>실행 순서는 1주차 <code>make_sample.py</code> → 1주차 → 2주차 → 3주차 → 4주차입니다. 4주차만 API 키가 필요합니다.</p>
+<h2 id="start-s4">공부 요령</h2>
+<ul>
+<li>에러가 나면 <strong>메시지 전체</strong>를 복사해 Claude에게 붙여 넣고 원인을 물어보세요. 비전공자가 가장 빨리 느는 방법입니다.</li>
+<li>샘플 데이터로 먼저 성공시키고, 익숙해지면 실제 업무 파일 구조에 맞게 바꿔 보세요.</li>
+<li>매주 끝에 "이번 주에 배운 걸 퀴즈로 내줘"라고 하면 복습이 됩니다.</li>
+<li>하루를 놓쳐도 괜찮습니다. 이 책은 첫 화면의 시작일만 바꾸면 일정이 다시 맞춰집니다.</li>
+</ul>
+<h2 id="start-s5">업무 자료와 보안</h2>
+<p>연습은 가상 데이터로 하지만 실제 업무에 쓰기 시작하면 달라집니다. 외부 AI 서비스로 자료를 보내기 전에 <strong>소속 기관의 정보보안 지침</strong>을 확인하세요. 개인정보(주민등록번호, 계좌, 연락처 등)는 보내지 않거나 가려서 보내고, 꼭 필요한 열만 골라 보내는 것이 기본입니다.</p><nav class="pager"><button type="button" data-go="week1"><small>다음</small>1주차 Python 기초와 엑셀 다루기</button></nav></article>
+<article class="chapter" id="ch-week1" data-id="week1" hidden><div class="eyebrow">1주차</div><h1>Python 기초와 엑셀 다루기</h1>
+<p>엑셀 한 시트를 읽어 항목별 합계와 집행률을 구하는 것이 이번 주의 목표입니다. 코드를 짜는 법보다 <strong>코드를 읽는 눈</strong>을 만드는 주간입니다.</p><div class="chips"><button type="button" data-target="week1-s0">이번 주 체크리스트</button><button type="button" data-target="week1-s1">일별 학습</button><button type="button" data-target="week1-s2">개념 정리</button><button type="button" data-target="week1-s3">복습 질문</button><button type="button" data-target="week1-s4">실습 코드</button></div>
+<h2 id="week1-s0">이번 주 체크리스트</h2>
+<ul>
+<li class="task"><label><input type="checkbox" class="chk"><span>변수, 리스트, 딕셔너리 개념 이해하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>반복문(for)과 조건문(if) 써 보기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>함수 한 개 직접 만들어 보기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>openpyxl로 엑셀 파일 읽기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>항목별 합계를 계산해 새 엑셀로 저장하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>코드 각 줄을 Claude에게 설명시키고 내 말로 다시 정리하기</span></label></li>
+</ul>
+<h2 id="week1-s1">일별 학습</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>요일</th>
+<th>이론 (읽고 이해)</th>
+<th>실습 (손으로 해 보기)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>월</td>
+<td>프로그램은 입력 → 처리 → 출력. 변수와 자료형(숫자, 문자열)</td>
+<td>예산 금액을 변수에 넣고 print로 출력</td>
+</tr>
+<tr>
+<td>화</td>
+<td>리스트(순서 있는 묶음)와 딕셔너리(이름표 붙은 묶음)</td>
+<td>항목명 리스트, {항목: 금액} 딕셔너리 만들기</td>
+</tr>
+<tr>
+<td>수</td>
+<td>조건문: 참/거짓과 비교 연산자(&gt;, ==)</td>
+<td>집행액이 예산을 넘으면 경고 메시지 출력</td>
+</tr>
+<tr>
+<td>목</td>
+<td>반복문: 같은 일을 여러 번 시키는 법</td>
+<td>for문으로 항목별 금액 합산</td>
+</tr>
+<tr>
+<td>금</td>
+<td>함수: 입력을 받아 결과를 돌려주는 상자, 재사용하는 이유</td>
+<td>집행률 계산 함수 만들기</td>
+</tr>
+<tr>
+<td>토</td>
+<td>라이브러리와 pip 설치. 엑셀 구조(파일 → 시트 → 셀)</td>
+<td>make_sample.py 실행 후 엑셀 열어 확인</td>
+</tr>
+<tr>
+<td>일</td>
+<td>에러 메시지 읽는 법 (맨 아래 줄부터)</td>
+<td>week1_sum_by_category.py 실행, 줄별 설명 듣고 복습 질문 풀기</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="week1-s2">개념 정리</h2>
+<h3>프로그램이란</h3>
+<p>컴퓨터는 시킨 순서대로만 움직이는 아주 빠른 신입 직원입니다. 프로그램은 <strong>입력 → 처리 → 출력</strong>으로 이루어진 업무 매뉴얼입니다. 예를 들어 예산 엑셀(입력)을 읽고, 집행률을 계산하고(처리), 요약 파일을 만드는(출력) 일이 하나의 프로그램입니다. Python은 문법이 영어 문장에 가깝고 엑셀·문서·API를 다루는 도구가 풍부해서 업무 자동화에 가장 많이 쓰입니다.</p>
+<h3>변수와 자료형</h3>
+<p>변수는 <strong>이름표가 붙은 상자</strong>입니다. 값을 상자에 넣어 두고 이름으로 꺼내 씁니다.</p>
+<pre><code class="language-python">budget = 12000000    # 정수(int)
+name = &quot;A사업&quot;        # 문자열(str): 따옴표로 감싼 글자
+rate = 79.2          # 실수(float): 소수점이 있는 숫자
+is_over = False      # 불리언(bool): True 또는 False
+</code></pre>
+<ul>
+<li><code>=</code>는 "같다"가 아니라 "오른쪽 값을 왼쪽 상자에 넣는다"는 뜻입니다. 같은지 비교할 때는 <code>==</code>를 씁니다.</li>
+<li>자료형에 따라 같은 <code>+</code>도 다르게 동작합니다. <code>100 + 200</code>은 300이지만 <code>"100" + "200"</code>은 글자를 이어 붙여 <code>"100200"</code>이 됩니다.</li>
+<li>엑셀에서 읽어 온 숫자가 문자로 들어오는 경우가 많습니다. <code>type(값)</code>으로 자료형을 확인하세요.</li>
+<li>흔한 실수: 숫자와 문자열을 더해서 <code>TypeError</code>가 납니다. 해결은 <code>int("100")</code>처럼 형을 바꾸는 것입니다.</li>
+</ul>
+<h3>리스트와 딕셔너리</h3>
+<p><strong>리스트</strong>는 번호표가 붙은 서랍장입니다(순서가 있음). <strong>딕셔너리</strong>는 이름표가 붙은 서랍장입니다(키로 값을 찾음).</p>
+<pre><code class="language-python">items = [&quot;인건비&quot;, &quot;사업비&quot;, &quot;운영비&quot;]
+items[0]                      # &quot;인건비&quot; (번호는 0부터 시작)
+
+budget = {&quot;인건비&quot;: 12000000, &quot;사업비&quot;: 8000000}
+budget[&quot;사업비&quot;]               # 8000000
+budget[&quot;홍보비&quot;] = 2000000     # 새 항목 추가
+budget.get(&quot;기타&quot;, 0)          # 없는 키는 0으로 (에러 방지)
+</code></pre>
+<p>엑셀로 비유하면 리스트는 한 열(또는 한 행), 딕셔너리는 "항목명 → 금액" 두 칸짜리 표입니다. 흔한 실수는 번호를 1부터 세는 것, 그리고 없는 키를 찾아 <code>KeyError</code>가 나는 것입니다.</p>
+<h3>조건문</h3>
+<p>"만약 ~라면 이렇게, 아니면 저렇게"를 코드로 쓴 것입니다.</p>
+<pre><code class="language-python">if spent &gt; budget:
+    print(&quot;예산 초과&quot;)
+elif spent / budget &lt; 0.8:
+    print(&quot;집행 저조&quot;)
+else:
+    print(&quot;정상&quot;)
+</code></pre>
+<ul>
+<li>비교 연산자: <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>==</code>(같다), <code>!=</code>(다르다). 여러 조건은 <code>and</code>, <code>or</code>, <code>not</code>으로 묶습니다.</li>
+<li>위에서부터 검사해서 <strong>처음 참인 것 하나만</strong> 실행합니다.</li>
+<li>Python에서는 <strong>들여쓰기(4칸)가 문법</strong>입니다. 들여쓴 줄만 그 조건 안에 속합니다.</li>
+<li>흔한 실수: <code>==</code> 대신 <code>=</code> 사용, 줄 끝 콜론(<code>:</code>) 빠뜨림, 들여쓰기 어긋남.</li>
+</ul>
+<h3>반복문</h3>
+<p>같은 일을 목록의 항목마다 되풀이합니다. 엑셀에서 수식을 아래로 쭉 끌어 채우는 것과 같습니다.</p>
+<pre><code class="language-python">total = 0                      # 합계 상자를 0으로 시작
+for amount in [3000000, 2400000, 250000]:
+    total += amount            # total = total + amount
+print(total)                   # 5650000
+
+for item, money in budget.items():   # 딕셔너리는 키와 값을 함께 꺼냄
+    print(item, money)
+</code></pre>
+<p>핵심 패턴은 <strong>누적</strong>입니다. 합계 변수를 0으로 만들어 두고 반복하며 더해 갑니다. 흔한 실수는 합계를 0으로 초기화하지 않는 것, 그리고 <code>print(total)</code>을 들여써서 매번 출력되게 만드는 것입니다.</p>
+<h3>함수</h3>
+<p>함수는 <strong>입력을 받아 결과를 돌려주는 상자</strong>입니다. 같은 계산을 여기저기 복사하는 대신 이름을 붙여 재사용하고, 고칠 때도 한 곳만 고치면 됩니다.</p>
+<pre><code class="language-python">def rate(spent, budget):
+    return round(spent / budget * 100, 1)
+
+rate(9500000, 12000000)   # 79.2
+</code></pre>
+<ul>
+<li><code>def</code>로 만들고(정의), 이름으로 부릅니다(호출). 정의만 하고 호출하지 않으면 아무 일도 일어나지 않습니다.</li>
+<li><code>print</code>는 화면에 보여줄 뿐이고, <code>return</code>은 값을 돌려줘서 다른 계산에 쓸 수 있게 합니다.</li>
+<li>흔한 실수: <code>return</code>을 빼먹으면 결과가 <code>None</code>이 됩니다. 예산이 0이면 <code>ZeroDivisionError</code>가 나므로 조건문으로 미리 막아야 합니다.</li>
+</ul>
+<h3>라이브러리와 엑셀 구조</h3>
+<p>라이브러리는 남이 만들어 둔 <strong>도구 상자</strong>입니다. <code>pip install 이름</code>으로 설치하고 <code>import</code>로 꺼내 씁니다. 엑셀은 <strong>워크북(파일) → 워크시트 → 셀(행·열)</strong> 구조이고, openpyxl이 이 구조를 그대로 다룹니다.</p>
+<pre><code class="language-python">from openpyxl import load_workbook
+
+ws = load_workbook(&quot;sample_budget.xlsx&quot;)[&quot;예산&quot;]      # 파일 열고 시트 선택
+for row in ws.iter_rows(min_row=2, values_only=True):   # 2행부터(머리글 제외)
+    print(row)    # ('A사업', '인건비', 12000000, 9500000)
+</code></pre>
+<p>한 행은 값 묶음(튜플)으로 나오므로 <code>사업명, 항목, 예산액, 집행액 = row</code>처럼 한 번에 풀어 받을 수 있습니다. 흔한 실수: 엑셀 파일이 열려 있어 저장이 막히는 것, 경로 오타로 <code>FileNotFoundError</code>, 시트 이름 오타로 <code>KeyError</code>.</p>
+<h3>에러 메시지 읽는 법</h3>
+<p>에러가 나도 당황하지 않아도 됩니다. <strong>맨 아래 한 줄</strong>에 종류와 이유가 있습니다(예: <code>KeyError: '홍보비'</code>는 "홍보비라는 키가 없다"). 그 위 줄들은 "어느 파일 몇 번째 줄에서"를 알려 줍니다. 전체를 복사해 Claude에게 붙여 넣으면 가장 빠르게 해결됩니다.</p>
+<h2 id="week1-s3">복습 질문</h2>
+<details><summary>1. <code>"100" + "200"</code>의 결과는 무엇이고 왜 그럴까요?</summary><p><code>"100200"</code>입니다. 따옴표로 감싼 값은 문자열이라 더하기가 글자 이어 붙이기로 동작합니다.</p></details>
+
+<details><summary>2. <code>=</code>와 <code>==</code>는 어떻게 다른가요?</summary><p><code>=</code>는 값을 변수에 넣는 대입, <code>==</code>는 두 값이 같은지 묻는 비교입니다.</p></details>
+
+<details><summary>3. 리스트의 첫 번째 항목은 몇 번일까요?</summary><p>0번입니다. 번호는 0부터 시작합니다.</p></details>
+
+<details><summary>4. 함수에서 <code>print</code>와 <code>return</code>의 차이는 무엇인가요?</summary><p><code>print</code>는 화면에 보여 주기만 하고, <code>return</code>은 값을 돌려줘서 다른 계산에 쓸 수 있게 합니다.</p></details><h2 id="week1-s4">실습 코드</h2>
+<p>압축 파일의 <code>practice</code> 폴더에 있는 것과 같은 코드입니다. 읽으면서 줄마다 무슨 일을 하는지 따라가 보세요.</p>
+<h3>week1/make_sample.py</h3><p>연습용 샘플 엑셀을 만듭니다. 처음 한 번만 실행하세요.</p><pre><code>&quot;&quot;&quot;연습용 샘플 엑셀(sample_budget.xlsx)을 만든다. 모든 데이터는 가상입니다.
+
+실행: python week1/make_sample.py
+&quot;&quot;&quot;
+from pathlib import Path
+from openpyxl import Workbook
+
+OUT = Path(__file__).resolve().parent.parent / &quot;sample_budget.xlsx&quot;
+
+# 시트 1: 예산 (사업명, 항목, 예산액, 집행액)
+budget = [
+    (&quot;사업명&quot;, &quot;항목&quot;, &quot;예산액&quot;, &quot;집행액&quot;),
+    (&quot;A사업&quot;, &quot;인건비&quot;, 12_000_000, 9_500_000),
+    (&quot;A사업&quot;, &quot;사업비&quot;, 8_000_000, 8_400_000),
+    (&quot;A사업&quot;, &quot;운영비&quot;, 3_000_000, 1_200_000),
+    (&quot;A사업&quot;, &quot;홍보비&quot;, 2_000_000, 1_900_000),
+    (&quot;B사업&quot;, &quot;인건비&quot;, 10_000_000, 7_000_000),
+    (&quot;B사업&quot;, &quot;사업비&quot;, 6_000_000, 5_950_000),
+    (&quot;B사업&quot;, &quot;운영비&quot;, 2_500_000, 2_600_000),
+    (&quot;B사업&quot;, &quot;홍보비&quot;, 1_500_000, 400_000),
+]
+
+# 시트 2: 지출내역 (증빙유형이 비어 있으면 증빙 누락)
+expenses = [
+    (&quot;지출일&quot;, &quot;사업명&quot;, &quot;항목&quot;, &quot;금액&quot;, &quot;증빙유형&quot;, &quot;설명&quot;),
+    (&quot;2026-03-05&quot;, &quot;A사업&quot;, &quot;인건비&quot;, 3_000_000, &quot;급여명세서&quot;, &quot;3월 사업담당자 급여&quot;),
+    (&quot;2026-03-12&quot;, &quot;A사업&quot;, &quot;사업비&quot;, 2_400_000, &quot;세금계산서&quot;, &quot;교육 강사료&quot;),
+    (&quot;2026-03-20&quot;, &quot;A사업&quot;, &quot;운영비&quot;, 250_000, &quot;영수증&quot;, &quot;사무용품 구입&quot;),
+    (&quot;2026-04-02&quot;, &quot;A사업&quot;, &quot;운영비&quot;, 350_000, None, &quot;회의 다과비&quot;),
+    (&quot;2026-04-10&quot;, &quot;A사업&quot;, &quot;홍보비&quot;, 480_000, &quot;세금계산서&quot;, &quot;리플릿 인쇄&quot;),
+    (&quot;2026-04-25&quot;, &quot;B사업&quot;, &quot;인건비&quot;, 2_800_000, &quot;급여명세서&quot;, &quot;4월 사업담당자 급여&quot;),
+    (&quot;2026-05-03&quot;, &quot;B사업&quot;, &quot;사업비&quot;, 1_900_000, &quot;세금계산서&quot;, &quot;현장 워크숍 대관 및 식비&quot;),
+    (&quot;2026-05-14&quot;, &quot;B사업&quot;, &quot;사업비&quot;, 1_500_000, &quot;영수증&quot;, &quot;참가자 교통비 지원&quot;),
+    (&quot;2026-05-20&quot;, &quot;B사업&quot;, &quot;운영비&quot;, 300_000, &quot;영수증&quot;, &quot;통신비&quot;),
+    (&quot;2026-06-01&quot;, &quot;B사업&quot;, &quot;홍보비&quot;, 520_000, &quot;세금계산서&quot;, &quot;SNS 광고&quot;),
+    (&quot;2026-06-15&quot;, &quot;A사업&quot;, &quot;사업비&quot;, 1_800_000, &quot;세금계산서&quot;, &quot;교재 제작&quot;),
+    (&quot;2026-06-28&quot;, &quot;B사업&quot;, &quot;홍보비&quot;, 200_000, None, &quot;현수막 제작&quot;),
+]
+
+wb = Workbook()
+ws = wb.active
+ws.title = &quot;예산&quot;
+for row in budget:
+    ws.append(row)
+ws2 = wb.create_sheet(&quot;지출내역&quot;)
+for row in expenses:
+    ws2.append(row)
+wb.save(OUT)
+print(f&quot;만들었어요: {OUT}&quot;)
+</code></pre>
+<h3>week1/week1_sum_by_category.py</h3><p>엑셀을 읽어 항목별 합계와 집행률을 구합니다.</p><pre><code>&quot;&quot;&quot;1주차: 엑셀을 읽어 항목별 예산·집행액 합계를 구한다. (openpyxl만 사용)
+
+실행: python week1/week1_sum_by_category.py
+먼저 make_sample.py를 한 번 실행해 두세요.
+&quot;&quot;&quot;
+from pathlib import Path
+from openpyxl import Workbook, load_workbook
+
+BASE = Path(__file__).resolve().parent.parent
+SRC = BASE / &quot;sample_budget.xlsx&quot;
+OUT = BASE / &quot;week1_result.xlsx&quot;
+
+
+def rate(spent, budget):
+    &quot;&quot;&quot;집행률(%) = 집행액 / 예산액 * 100&quot;&quot;&quot;
+    return round(spent / budget * 100, 1)
+
+
+ws = load_workbook(SRC)[&quot;예산&quot;]
+
+# 항목별 [예산 합, 집행 합]을 딕셔너리에 모은다.
+totals = {}
+for name, item, budget, spent in ws.iter_rows(min_row=2, values_only=True):
+    totals.setdefault(item, [0, 0])
+    totals[item][0] += budget
+    totals[item][1] += spent
+
+out = Workbook()
+sheet = out.active
+sheet.append([&quot;항목&quot;, &quot;예산합계&quot;, &quot;집행합계&quot;, &quot;집행률(%)&quot;])
+for item, (budget, spent) in totals.items():
+    print(f&quot;{item}: 예산 {budget:,}원 / 집행 {spent:,}원 / {rate(spent, budget)}%&quot;)
+    sheet.append([item, budget, spent, rate(spent, budget)])
+out.save(OUT)
+print(f&quot;저장: {OUT}&quot;)
+
+# 자기 점검: 인건비 예산 합계는 22,000,000원이어야 한다.
+assert totals[&quot;인건비&quot;][0] == 22_000_000
+</code></pre><nav class="pager"><button type="button" data-go="start"><small>이전</small>시작하기</button><button type="button" data-go="week2"><small>다음</small>2주차 pandas로 표 데이터 다루기</button></nav></article>
+<article class="chapter" id="ch-week2" data-id="week2" hidden><div class="eyebrow">2주차</div><h1>pandas로 표 데이터 다루기</h1>
+<p>항목별 집행률을 계산하고 80% 미만·100% 초과 항목에 색을 칠하는 것이 목표입니다. 1주차의 반복문을 "열 전체를 한 번에 계산"하는 방식으로 바꾸는 주간입니다.</p><div class="chips"><button type="button" data-target="week2-s0">이번 주 체크리스트</button><button type="button" data-target="week2-s1">일별 학습</button><button type="button" data-target="week2-s2">개념 정리</button><button type="button" data-target="week2-s3">복습 질문</button><button type="button" data-target="week2-s4">실습 코드</button></div>
+<h2 id="week2-s0">이번 주 체크리스트</h2>
+<ul>
+<li class="task"><label><input type="checkbox" class="chk"><span>DataFrame이 무엇인지 이해하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>필터링과 정렬 해 보기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>groupby로 항목·사업별 합계 구하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>열 추가로 집행률 계산하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>결측치(빈 칸) 처리 방법 익히기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>결과를 서식 있는 엑셀로 저장하기</span></label></li>
+</ul>
+<h2 id="week2-s1">일별 학습</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>요일</th>
+<th>이론 (읽고 이해)</th>
+<th>실습 (손으로 해 보기)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>월</td>
+<td>표 데이터의 구조: 행, 열, 인덱스. DataFrame이란</td>
+<td>read_excel로 불러와 head(), shape 확인</td>
+</tr>
+<tr>
+<td>화</td>
+<td>열 선택과 조건 필터링</td>
+<td>집행률 100% 초과 행만 골라 보기</td>
+</tr>
+<tr>
+<td>수</td>
+<td>열 단위 연산: 반복문 없이 열 전체를 한 번에 계산</td>
+<td>집행률 열 추가</td>
+</tr>
+<tr>
+<td>목</td>
+<td>groupby의 원리: 쪼개기 → 계산 → 합치기</td>
+<td>항목별, 사업별 합계 구하기</td>
+</tr>
+<tr>
+<td>금</td>
+<td>결측치(NaN)와 자료형 오류(숫자가 문자로 들어간 경우)</td>
+<td>빈 칸 채우기, 천 단위 쉼표 제거</td>
+</tr>
+<tr>
+<td>토</td>
+<td>결과 저장과 조건부 서식</td>
+<td>80% 미만·100% 초과 칸에 색 입혀 엑셀 저장</td>
+</tr>
+<tr>
+<td>일</td>
+<td>한 주 복습</td>
+<td>week2_execution_rate.py 실행, 줄별 설명 듣고 복습 질문 풀기</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="week2-s2">개념 정리</h2>
+<h3>왜 pandas인가</h3>
+<p>1주차의 반복문으로도 합계는 구할 수 있지만, 수천 행의 표에서 필터링·그룹 합계·병합까지 하려면 코드가 길어집니다. pandas는 <strong>엑셀 시트를 통째로 다루는 도구</strong>입니다. "열 전체에 한 번에", "조건에 맞는 행만", "항목별로 묶어서" 같은 작업을 한두 줄로 합니다.</p>
+<h3>DataFrame: 코드 속의 엑셀 시트</h3>
+<p>DataFrame은 <strong>행과 열이 있는 표</strong>입니다. 엑셀 시트 하나가 DataFrame 하나입니다.</p>
+<ul>
+<li><strong>열(column)</strong>: 항목 하나의 값 모음. 예: <code>df["예산액"]</code></li>
+<li><strong>행(row)</strong>: 한 건의 기록. 예: A사업 인건비 한 줄</li>
+<li><strong>인덱스(index)</strong>: 행 번호표. 기본은 0, 1, 2…</li>
+</ul>
+<pre><code class="language-python">import pandas as pd
+
+df = pd.read_excel(&quot;sample_budget.xlsx&quot;, sheet_name=&quot;예산&quot;)
+df.head()    # 앞 5행 미리보기
+df.shape     # (8, 4) = 8행 4열
+df.info()    # 열 이름, 자료형, 빈 칸 수
+</code></pre>
+<p>불러오면 가장 먼저 <code>head()</code>, <code>shape</code>, <code>info()</code> 세 가지로 <strong>내가 생각한 표와 같은지</strong> 확인하는 습관을 들이세요. 자동화에서 가장 많은 사고는 "데이터가 생각과 달랐던 것"에서 납니다.</p>
+<h3>선택과 필터링</h3>
+<pre><code class="language-python">df[&quot;집행액&quot;]                          # 열 하나 선택 (Series)
+df[[&quot;항목&quot;, &quot;집행액&quot;]]                # 열 여러 개 선택 (대괄호 두 겹)
+df[df[&quot;집행액&quot;] &gt; 8000000]            # 조건에 맞는 행만
+df[(df[&quot;사업명&quot;] == &quot;A사업&quot;) &amp; (df[&quot;집행액&quot;] &gt; 5000000)]   # 조건 여러 개
+df.sort_values(&quot;집행액&quot;, ascending=False)   # 큰 순서로 정렬
+</code></pre>
+<p>조건식 <code>df["집행액"] &gt; 8000000</code>은 행마다 True/False를 만들고, 바깥 <code>df[...]</code>가 True인 행만 남깁니다. 조건을 둘 이상 묶을 때는 <code>and</code>가 아니라 <code>&amp;</code>, <code>or</code>가 아니라 <code>|</code>를 쓰고, 각 조건을 <strong>괄호로 감싸야</strong> 합니다. 이 괄호를 빼먹는 것이 가장 흔한 에러입니다.</p>
+<h3>열 연산: 반복문 없이 한 번에</h3>
+<pre><code class="language-python">df[&quot;집행률&quot;] = (df[&quot;집행액&quot;] / df[&quot;예산액&quot;] * 100).round(1)
+</code></pre>
+<p>엑셀에서 첫 행에 수식을 넣고 아래로 채우는 일을, pandas는 <strong>열 전체에 한 번에</strong> 적용합니다(벡터화). 반복문보다 짧고 훨씬 빠릅니다. 없는 열 이름에 값을 넣으면 새 열이 만들어집니다.</p>
+<h3>groupby: 쪼개기 → 계산 → 합치기</h3>
+<p>엑셀의 피벗 테이블과 같은 개념입니다.</p>
+<pre><code class="language-python">df.groupby(&quot;사업명&quot;)[[&quot;예산액&quot;, &quot;집행액&quot;]].sum()
+</code></pre>
+<ol>
+<li><strong>쪼개기</strong>: 사업명이 같은 행끼리 묶는다 (A사업 묶음, B사업 묶음)</li>
+<li><strong>계산</strong>: 각 묶음에서 합계를 구한다 (<code>sum</code>, <code>mean</code>, <code>count</code>, <code>max</code> 등)</li>
+<li><strong>합치기</strong>: 결과를 한 표로 모은다</li>
+</ol>
+<p>주의할 점: 집행률 같은 <strong>비율의 합계는 구하면 안 됩니다.</strong> 사업별 집행률은 항목별 집행률을 더하는 게 아니라, 합계 예산과 합계 집행액을 구한 뒤 <strong>다시 나눠야</strong> 정확합니다.</p>
+<h3>결측치와 자료형</h3>
+<p>빈 칸은 pandas에서 <code>NaN</code>(값 없음)으로 읽힙니다. 숫자 열에 NaN이 섞이면 합계는 NaN을 건너뛰고, 나눗셈 결과는 NaN이 됩니다.</p>
+<pre><code class="language-python">df[&quot;증빙유형&quot;].isna()                  # 빈 칸 여부 (True/False)
+df[&quot;집행액&quot;].fillna(0)                 # 빈 칸을 0으로 채우기
+df.dropna(subset=[&quot;증빙유형&quot;])         # 빈 칸 있는 행 지우기
+df[&quot;금액&quot;] = df[&quot;금액&quot;].astype(str).str.replace(&quot;,&quot;, &quot;&quot;).astype(int)   # &quot;1,200,000&quot; → 1200000
+</code></pre>
+<p>엑셀에서 숫자를 <code>"1,200,000"</code>처럼 글자로 저장해 두면 계산이 되지 않습니다. 의도적으로 비운 칸(증빙 누락)을 0으로 채워 버리면 <strong>오류를 숨기게 되므로</strong>, 채우기 전에 "이 빈 칸은 오류 신호인가, 정상인가"를 먼저 판단하세요.</p>
+<h3>흔한 에러</h3>
+<ul>
+<li><code>KeyError: '집행율'</code>: 열 이름 오타. <code>df.columns</code>로 실제 이름을 확인합니다. 열 이름 앞뒤 공백도 원인이 됩니다.</li>
+<li><code>ValueError: ... truth value of a Series is ambiguous</code>: 조건에 <code>and</code>/<code>or</code>를 썼을 때 납니다. <code>&amp;</code>/<code>|</code>와 괄호로 바꿉니다.</li>
+<li>저장한 엑셀에 왼쪽에 0, 1, 2 번호 열이 생김: <code>to_excel(..., index=False)</code>로 인덱스 저장을 끕니다.</li>
+</ul>
+<h2 id="week2-s3">복습 질문</h2>
+<details><summary>1. 열 전체에 한 번에 계산하는 방식이 반복문보다 좋은 이유는 무엇인가요?</summary><p>코드가 짧고 빠르며, 행마다 합계 변수를 관리하다 생기는 실수가 줄어듭니다.</p></details>
+
+<details><summary>2. 조건을 두 개 이상 묶을 때 <code>and</code> 대신 무엇을 쓰고, 무엇을 꼭 해야 하나요?</summary><p><code>&amp;</code>(또는 <code>|</code>)를 쓰고 각 조건을 괄호로 감쌉니다.</p></details>
+
+<details><summary>3. 사업별 집행률은 어떻게 구해야 정확할까요?</summary><p>항목별 집행률을 더하지 않고, 사업별 예산 합계와 집행 합계를 먼저 구한 뒤 다시 나눕니다.</p></details>
+
+<details><summary>4. 빈 칸을 0으로 채우기 전에 무엇을 확인해야 하나요?</summary><p>그 빈 칸이 정상인지, 증빙 누락 같은 오류 신호인지입니다. 오류 신호를 0으로 덮으면 문제가 숨습니다.</p></details><h2 id="week2-s4">실습 코드</h2>
+<p>압축 파일의 <code>practice</code> 폴더에 있는 것과 같은 코드입니다. 읽으면서 줄마다 무슨 일을 하는지 따라가 보세요.</p>
+<h3>week2/week2_execution_rate.py</h3><p>pandas로 집행률을 계산하고 80% 미만·100% 초과 칸에 색을 입힙니다.</p><pre><code>&quot;&quot;&quot;2주차: pandas로 집행률을 계산하고 80% 미만·100% 초과 칸에 색을 입힌다.
+
+실행: python week2/week2_execution_rate.py
+필요: pip install pandas openpyxl
+&quot;&quot;&quot;
+from pathlib import Path
+import pandas as pd
+from openpyxl import load_workbook
+from openpyxl.styles import PatternFill
+
+BASE = Path(__file__).resolve().parent.parent
+OUT = BASE / &quot;week2_result.xlsx&quot;
+
+df = pd.read_excel(BASE / &quot;sample_budget.xlsx&quot;, sheet_name=&quot;예산&quot;)
+print(df.head(), df.shape, sep=&quot;\n&quot;)  # 월요일 실습: 표의 모양 확인
+
+# 열 하나를 통째로 계산 (반복문이 필요 없다)
+df[&quot;집행률&quot;] = (df[&quot;집행액&quot;] / df[&quot;예산액&quot;] * 100).round(1)
+
+# 필터링: 100% 초과
+print(&quot;\n[100% 초과]&quot;)
+print(df[df[&quot;집행률&quot;] &gt; 100])
+
+# 집계: 사업별·항목별 합계 (쪼개기 -&gt; 계산 -&gt; 합치기)
+by_project = df.groupby(&quot;사업명&quot;)[[&quot;예산액&quot;, &quot;집행액&quot;]].sum()
+by_project[&quot;집행률&quot;] = (by_project[&quot;집행액&quot;] / by_project[&quot;예산액&quot;] * 100).round(1)
+print(&quot;\n[사업별]&quot;)
+print(by_project)
+
+# 엑셀 저장 후 조건부 색칠
+with pd.ExcelWriter(OUT) as w:
+    df.to_excel(w, sheet_name=&quot;상세&quot;, index=False)
+    by_project.to_excel(w, sheet_name=&quot;사업별&quot;)
+
+wb = load_workbook(OUT)
+ws = wb[&quot;상세&quot;]
+red = PatternFill(&quot;solid&quot;, fgColor=&quot;FFC7CE&quot;)     # 100% 초과
+yellow = PatternFill(&quot;solid&quot;, fgColor=&quot;FFEB9C&quot;)  # 80% 미만
+rate_col = list(df.columns).index(&quot;집행률&quot;) + 1
+for r in range(2, ws.max_row + 1):
+    cell = ws.cell(row=r, column=rate_col)
+    if cell.value &gt; 100:
+        cell.fill = red
+    elif cell.value &lt; 80:
+        cell.fill = yellow
+wb.save(OUT)
+print(f&quot;\n저장: {OUT}&quot;)
+
+assert (df[&quot;집행률&quot;] &gt; 100).sum() == 2  # 샘플 기준 A사업 사업비, B사업 운영비
+</code></pre><nav class="pager"><button type="button" data-go="week1"><small>이전</small>1주차 Python 기초와 엑셀 다루기</button><button type="button" data-go="week3"><small>다음</small>3주차 규칙 검사와 SQL 맛보기</button></nav></article>
+<article class="chapter" id="ch-week3" data-id="week3" hidden><div class="eyebrow">3주차</div><h1>규칙 검사와 SQL 맛보기</h1>
+<p>정산 기준을 코드의 규칙으로 옮기고, 지출 내역을 데이터베이스에 넣어 조회해 봅니다. 2주차의 groupby와 merge가 SQL에서는 어떤 문장이 되는지 연결해서 익히는 주간입니다.</p><div class="chips"><button type="button" data-target="week3-s0">이번 주 체크리스트</button><button type="button" data-target="week3-s1">일별 학습</button><button type="button" data-target="week3-s2">개념 정리</button><button type="button" data-target="week3-s3">복습 질문</button><button type="button" data-target="week3-s4">실습 코드</button></div>
+<h2 id="week3-s0">이번 주 체크리스트</h2>
+<ul>
+<li class="task"><label><input type="checkbox" class="chk"><span>항목별 한도, 필수 증빙을 규칙 표로 정리하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>규칙 위반 항목을 자동으로 표시하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>SQLite에 지출 내역 넣기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>SELECT, WHERE, ORDER BY 연습</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>GROUP BY로 사업별·월별 합계 구하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>JOIN으로 지출 내역과 사업 정보 합치기</span></label></li>
+</ul>
+<h2 id="week3-s1">일별 학습</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>요일</th>
+<th>이론 (읽고 이해)</th>
+<th>실습 (손으로 해 보기)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>월</td>
+<td>규칙 기반 처리: 규칙(한도, 필수 증빙)을 코드에서 분리해 표로 두는 이유</td>
+<td>항목별 한도 규칙 표 만들기</td>
+</tr>
+<tr>
+<td>화</td>
+<td>표 합치기(merge): 지출 내역에 규칙을 붙이는 법</td>
+<td>한도 초과 여부 열 추가</td>
+</tr>
+<tr>
+<td>수</td>
+<td>증빙 누락 판정: 빈 값과 목록 포함 여부 검사</td>
+<td>필수 증빙 없는 행 표시</td>
+</tr>
+<tr>
+<td>목</td>
+<td>데이터베이스 기초: 테이블, 행, 열, 기본키</td>
+<td>SQLite 파일 만들고 지출 테이블 생성</td>
+</tr>
+<tr>
+<td>금</td>
+<td>SELECT, WHERE, ORDER BY</td>
+<td>조건에 맞는 지출만 조회</td>
+</tr>
+<tr>
+<td>토</td>
+<td>GROUP BY와 집계 함수(SUM, COUNT)</td>
+<td>사업별, 월별 합계 조회</td>
+</tr>
+<tr>
+<td>일</td>
+<td>JOIN: 테이블을 키로 연결하기</td>
+<td>지출 내역과 사업 정보 합쳐 조회, 복습 질문 풀기</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="week3-s2">개념 정리</h2>
+<h3>규칙 기반 처리: 규칙은 코드 밖에 둔다</h3>
+<p>정산 점검은 "인건비는 건당 350만 원 이하", "운영비는 영수증 필수" 같은 <strong>규칙의 집합</strong>입니다. 이 규칙을 <code>if</code> 문으로 코드 안에 박아 넣으면 기준이 바뀔 때마다 코드를 고쳐야 하고, 어디를 고쳤는지 추적하기도 어렵습니다. 그래서 규칙은 <strong>표(데이터)</strong> 로 따로 두고, 코드는 "표를 읽어 적용하는 일"만 합니다.</p>
+<pre><code class="language-python">RULES = pd.DataFrame(
+    [(&quot;인건비&quot;, 3500000, &quot;급여명세서&quot;), (&quot;운영비&quot;, 300000, &quot;영수증,세금계산서&quot;)],
+    columns=[&quot;항목&quot;, &quot;건당한도&quot;, &quot;인정증빙&quot;],
+)
+</code></pre>
+<p>이렇게 하면 기준이 바뀔 때 표만 고치면 되고, 담당자가 코드를 몰라도 엑셀 규칙표를 직접 관리할 수도 있습니다. 규칙이 코드와 분리되어 있다는 점이 "자동화를 오래 쓸 수 있는가"를 가르는 핵심입니다.</p>
+<h3>merge: 두 표를 열쇠로 붙이기</h3>
+<p>엑셀의 VLOOKUP(XLOOKUP)과 같은 역할입니다. 공통 열(<strong>키</strong>)을 기준으로 두 표를 옆으로 붙입니다.</p>
+<pre><code class="language-python">exp = exp.merge(RULES, on=&quot;항목&quot;, how=&quot;left&quot;)
+</code></pre>
+<ul>
+<li><code>on="항목"</code>: 이 열의 값이 같은 행끼리 연결</li>
+<li><code>how="left"</code>: 왼쪽 표(지출내역)의 행은 <strong>하나도 잃지 않고</strong> 유지. 규칙이 없는 항목은 규칙 칸이 빈 값(NaN)</li>
+<li>붙인 뒤에는 <code>exp["건당한도"].isna().sum()</code>으로 규칙이 없는 지출이 몇 건인지 꼭 확인하세요. 점검 대상이 조용히 빠지는 것을 막아 줍니다.</li>
+</ul>
+<h3>규칙 적용: 한 열에 한 질문</h3>
+<pre><code class="language-python">exp[&quot;한도초과&quot;] = exp[&quot;금액&quot;] &gt; exp[&quot;건당한도&quot;]
+exp[&quot;증빙누락&quot;] = exp[&quot;증빙유형&quot;].isna()
+issues = exp[exp[[&quot;한도초과&quot;, &quot;증빙누락&quot;]].any(axis=1)]   # 하나라도 True인 행
+</code></pre>
+<p>점검 항목마다 True/False 열을 하나씩 만들어 두면 어떤 건이 <strong>왜</strong> 걸렸는지 결과표에 그대로 남습니다. <code>any(axis=1)</code>은 "행 방향으로 하나라도 True인가", <code>all(axis=1)</code>은 "모두 True인가"입니다. 자동 점검은 <strong>의심 후보를 추려 주는 도구</strong>이지 최종 판정이 아닙니다. 걸린 건을 사람이 확인하는 단계를 업무 흐름에 반드시 넣으세요.</p>
+<h3>데이터베이스와 SQL</h3>
+<p>엑셀 파일은 편하지만 수만 건, 여러 사람이 동시에 쓰는 데이터, 여러 표의 연결에는 한계가 있습니다. <strong>데이터베이스(DB)</strong> 는 표를 안전하고 빠르게 보관·조회하는 저장소이고, <strong>SQL</strong>은 그 저장소에 "이런 데이터를 꺼내 줘"라고 묻는 언어입니다.</p>
+<ul>
+<li><strong>테이블</strong>: 엑셀 시트 하나 (예: <code>expense</code>)</li>
+<li><strong>행(레코드)</strong>: 한 건의 기록</li>
+<li><strong>열(컬럼)</strong>: 항목 하나. 각 열에는 자료형이 정해져 있음</li>
+<li><strong>기본키(Primary Key)</strong>: 행마다 겹치지 않는 고유 번호. 한 건을 정확히 가리키는 주민번호 같은 역할</li>
+<li><strong>SQLite</strong>: 파일 하나가 곧 DB인 가장 가벼운 DB. 설치 없이 Python에 들어 있어 연습에 알맞음</li>
+</ul>
+<h3>SQL 기본 문장 읽는 법</h3>
+<p>SQL은 "무엇을 → 어디서 → 어떤 조건으로" 순서의 영어 문장처럼 읽습니다.</p>
+<pre><code class="language-sql">SELECT 지출일, 항목, 금액     -- 어떤 열을 보여줄지
+FROM expense                 -- 어느 테이블에서
+WHERE 금액 &gt;= 500000         -- 어떤 행만 (엑셀의 필터)
+ORDER BY 금액 DESC;          -- 정렬 (DESC는 큰 순서)
+</code></pre>
+<ul>
+<li><code>SELECT *</code>는 모든 열입니다.</li>
+<li>문자 조건은 작은따옴표를 씁니다: <code>WHERE 사업명 = 'A사업'</code></li>
+<li>조건을 묶을 때는 <code>AND</code>, <code>OR</code>를 씁니다.</li>
+</ul>
+<h3>GROUP BY와 집계 함수</h3>
+<p>2주차의 groupby와 같은 개념입니다. 엑셀 피벗 테이블이라고 생각하세요.</p>
+<pre><code class="language-sql">SELECT 사업명, SUM(금액) AS 합계, COUNT(*) AS 건수
+FROM expense
+GROUP BY 사업명;
+</code></pre>
+<ul>
+<li>집계 함수: <code>SUM</code>(합), <code>COUNT</code>(건수), <code>AVG</code>(평균), <code>MAX</code>/<code>MIN</code></li>
+<li><code>AS 합계</code>: 결과 열에 이름 붙이기</li>
+<li>규칙: SELECT에 쓴 열 중 집계 함수가 아닌 열은 <strong>반드시 GROUP BY에도</strong> 있어야 합니다.</li>
+<li><code>WHERE</code>는 묶기 <strong>전에</strong> 행을 거르고, <code>HAVING</code>은 묶은 <strong>뒤에</strong> 결과를 거릅니다 (예: 합계가 100만 원 넘는 사업만).</li>
+</ul>
+<h3>JOIN: 표 연결하기</h3>
+<p>merge와 같은 개념을 SQL로 쓴 것입니다. 데이터를 표 하나에 몰아넣지 않고 <strong>주제별로 나눠 저장</strong>(예산 표, 지출 표)한 뒤, 필요할 때 키로 연결합니다. 같은 정보를 여러 곳에 중복 저장하지 않아 수정할 때 한 곳만 고치면 됩니다.</p>
+<pre><code class="language-sql">SELECT b.사업명, b.항목, b.예산액, SUM(e.금액) AS 지출합계
+FROM budget b
+JOIN expense e ON b.사업명 = e.사업명 AND b.항목 = e.항목
+GROUP BY b.사업명, b.항목;
+</code></pre>
+<ul>
+<li><code>budget b</code>: budget 표에 <code>b</code>라는 별명을 붙여 쓰기 쉽게 함</li>
+<li><code>ON ...</code>: 어떤 열이 같으면 같은 행으로 볼지(연결 조건)</li>
+<li><code>JOIN</code>(INNER JOIN)은 양쪽에 모두 있는 행만 남깁니다. 지출이 한 번도 없는 예산 항목까지 보고 싶다면 <code>LEFT JOIN</code>을 씁니다. 샘플에서 직접 바꿔 비교해 보세요.</li>
+</ul>
+<h3>흔한 실수</h3>
+<ul>
+<li>연결 조건을 빼먹으면 두 표의 모든 조합이 나와 행이 폭증합니다(8행 × 12행 = 96행).</li>
+<li>날짜를 글자로 저장한 경우 월별 집계는 <code>substr(지출일, 1, 7)</code>로 앞 7글자(<code>2026-03</code>)만 잘라 씁니다.</li>
+<li>엑셀의 금액이 글자로 들어가면 <code>SUM</code>이 엉뚱하게 나옵니다. DB에 넣기 전에 자료형을 맞추세요.</li>
+</ul>
+<h2 id="week3-s3">복습 질문</h2>
+<details><summary>1. 정산 규칙을 코드 안이 아니라 표로 따로 두는 이유는 무엇인가요?</summary><p>기준이 바뀔 때 코드를 고치지 않고 표만 고치면 되고, 무엇이 바뀌었는지 추적하기 쉽기 때문입니다.</p></details>
+
+<details><summary>2. <code>merge</code>의 <code>how="left"</code>는 어떤 뜻인가요?</summary><p>왼쪽 표의 행을 하나도 잃지 않고 유지하고, 짝이 없는 행은 붙인 열이 빈 값이 됩니다.</p></details>
+
+<details><summary>3. SQL에서 <code>WHERE</code>와 <code>HAVING</code>은 무엇이 다른가요?</summary><p><code>WHERE</code>는 묶기 전에 행을 거르고, <code>HAVING</code>은 묶어서 계산한 뒤 결과를 거릅니다.</p></details>
+
+<details><summary>4. JOIN에서 연결 조건(<code>ON</code>)을 빼먹으면 어떻게 될까요?</summary><p>두 표의 모든 조합이 만들어져 행이 폭증합니다. 8행과 12행이면 96행이 됩니다.</p></details><h2 id="week3-s4">실습 코드</h2>
+<p>압축 파일의 <code>practice</code> 폴더에 있는 것과 같은 코드입니다. 읽으면서 줄마다 무슨 일을 하는지 따라가 보세요.</p>
+<h3>week3/week3_rules_check.py</h3><p>한도·증빙 규칙을 표로 두고 지출 내역을 자동 점검합니다.</p><pre><code>&quot;&quot;&quot;3주차: 정산 규칙을 &#x27;표&#x27;로 분리해 지출내역을 자동 점검한다.
+
+규칙(한도·필수 증빙)은 코드가 아니라 RULES 표에 있다. 규칙이 바뀌면 표만 고치면 된다.
+아래 규칙은 연습용 가짜 기준입니다. 실제 업무에서는 기관의 정산 기준으로 바꾸세요.
+
+실행: python week3/week3_rules_check.py
+&quot;&quot;&quot;
+from pathlib import Path
+import pandas as pd
+
+BASE = Path(__file__).resolve().parent.parent
+
+# 항목별 1건당 한도(원)와 인정되는 증빙
+RULES = pd.DataFrame(
+    [
+        (&quot;인건비&quot;, 3_500_000, &quot;급여명세서&quot;),
+        (&quot;사업비&quot;, 2_000_000, &quot;세금계산서,영수증&quot;),
+        (&quot;운영비&quot;, 300_000, &quot;영수증,세금계산서&quot;),
+        (&quot;홍보비&quot;, 500_000, &quot;세금계산서&quot;),
+    ],
+    columns=[&quot;항목&quot;, &quot;건당한도&quot;, &quot;인정증빙&quot;],
+)
+
+exp = pd.read_excel(BASE / &quot;sample_budget.xlsx&quot;, sheet_name=&quot;지출내역&quot;)
+exp = exp.merge(RULES, on=&quot;항목&quot;, how=&quot;left&quot;)  # 지출 내역에 규칙을 붙인다
+
+exp[&quot;한도초과&quot;] = exp[&quot;금액&quot;] &gt; exp[&quot;건당한도&quot;]
+exp[&quot;증빙누락&quot;] = exp[&quot;증빙유형&quot;].isna()
+# 증빙은 있으나 인정 증빙이 아닌 경우
+exp[&quot;증빙부적합&quot;] = ~exp[&quot;증빙누락&quot;] &amp; ~exp.apply(
+    lambda r: r[&quot;증빙유형&quot;] in str(r[&quot;인정증빙&quot;]).split(&quot;,&quot;), axis=1
+)
+
+issues = exp[exp[[&quot;한도초과&quot;, &quot;증빙누락&quot;, &quot;증빙부적합&quot;]].any(axis=1)]
+print(f&quot;점검 {len(exp)}건 중 확인 필요 {len(issues)}건&quot;)
+print(issues[[&quot;지출일&quot;, &quot;사업명&quot;, &quot;항목&quot;, &quot;금액&quot;, &quot;설명&quot;, &quot;한도초과&quot;, &quot;증빙누락&quot;, &quot;증빙부적합&quot;]])
+
+exp.to_excel(BASE / &quot;week3_check_result.xlsx&quot;, index=False)
+issues.to_excel(BASE / &quot;week3_issues.xlsx&quot;, index=False)
+
+assert exp[&quot;증빙누락&quot;].sum() == 2  # 샘플: 다과비, 현수막
+</code></pre>
+<h3>week3/week3_sql_practice.py</h3><p>지출 내역을 SQLite에 넣고 SELECT, GROUP BY, JOIN을 연습합니다.</p><pre><code>&quot;&quot;&quot;3주차: 지출내역을 SQLite(DB)에 넣고 SQL로 조회해 본다.
+
+SQL 문장(SELECT ...)을 눈으로 읽고, 한 줄씩 바꿔 실행해 보는 것이 이 파일의 목적입니다.
+실행: python week3/week3_sql_practice.py
+&quot;&quot;&quot;
+import sqlite3
+from pathlib import Path
+import pandas as pd
+
+BASE = Path(__file__).resolve().parent.parent
+DB = BASE / &quot;practice.db&quot;
+
+con = sqlite3.connect(DB)
+# 엑셀의 두 시트를 DB 테이블 두 개로 옮긴다 (이미 있으면 덮어씀)
+pd.read_excel(BASE / &quot;sample_budget.xlsx&quot;, sheet_name=&quot;예산&quot;).to_sql(&quot;budget&quot;, con, if_exists=&quot;replace&quot;, index=False)
+pd.read_excel(BASE / &quot;sample_budget.xlsx&quot;, sheet_name=&quot;지출내역&quot;).to_sql(&quot;expense&quot;, con, if_exists=&quot;replace&quot;, index=False)
+
+
+def show(title, sql):
+    print(f&quot;\n## {title}\n{sql.strip()}&quot;)
+    print(pd.read_sql(sql, con).to_string(index=False))
+
+
+# 금요일: SELECT / WHERE / ORDER BY
+show(&quot;50만원 이상 지출, 큰 금액순&quot;, &quot;&quot;&quot;
+SELECT 지출일, 사업명, 항목, 금액 FROM expense
+WHERE 금액 &gt;= 500000
+ORDER BY 금액 DESC
+&quot;&quot;&quot;)
+
+# 토요일: GROUP BY와 집계 함수
+show(&quot;사업별 지출 합계와 건수&quot;, &quot;&quot;&quot;
+SELECT 사업명, SUM(금액) AS 합계, COUNT(*) AS 건수
+FROM expense GROUP BY 사업명
+&quot;&quot;&quot;)
+show(&quot;월별 지출 합계&quot;, &quot;&quot;&quot;
+SELECT substr(지출일, 1, 7) AS 월, SUM(금액) AS 합계
+FROM expense GROUP BY 월 ORDER BY 월
+&quot;&quot;&quot;)
+
+# 일요일: JOIN (사업명+항목을 열쇠로 두 표를 연결)
+show(&quot;예산 대비 실제 지출 (JOIN)&quot;, &quot;&quot;&quot;
+SELECT b.사업명, b.항목, b.예산액, SUM(e.금액) AS 지출합계
+FROM budget b JOIN expense e ON b.사업명 = e.사업명 AND b.항목 = e.항목
+GROUP BY b.사업명, b.항목
+&quot;&quot;&quot;)
+
+con.close()
+
+# 자기 점검: 지출내역 12건, 합계 15,500,000원
+con = sqlite3.connect(DB)
+assert con.execute(&quot;SELECT COUNT(*), SUM(금액) FROM expense&quot;).fetchone() == (12, 15_500_000)
+con.close()
+</code></pre><nav class="pager"><button type="button" data-go="week2"><small>이전</small>2주차 pandas로 표 데이터 다루기</button><button type="button" data-go="week4"><small>다음</small>4주차 AI API로 자동화 완성하기</button></nav></article>
+<article class="chapter" id="ch-week4" data-id="week4" hidden><div class="eyebrow">4주차</div><h1>AI API로 자동화 완성하기</h1>
+<p>점검 결과를 담당자용 요약 메일 초안으로 만드는 것이 목표입니다. 3주차까지 만든 규칙 점검 위에 AI를 얹어서, 읽기부터 요약 저장까지 한 흐름을 완성하는 주간입니다.</p><div class="chips"><button type="button" data-target="week4-s0">이번 주 체크리스트</button><button type="button" data-target="week4-s1">일별 학습</button><button type="button" data-target="week4-s2">개념 정리</button><button type="button" data-target="week4-s3">복습 질문</button><button type="button" data-target="week4-s4">실습 코드</button></div>
+<h2 id="week4-s0">이번 주 체크리스트</h2>
+<ul>
+<li class="task"><label><input type="checkbox" class="chk"><span>API 키를 코드에 직접 쓰지 않고 환경변수로 관리하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>Claude API를 호출해 응답 받아 보기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>프롬프트에 규칙과 출력 형식 명시하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>지출 설명을 항목으로 분류하게 하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>점검 결과를 요약문으로 만들게 하기</span></label></li>
+<li class="task"><label><input type="checkbox" class="chk"><span>전체 흐름(읽기 → 점검 → 요약 → 저장)을 한 번에 실행하기</span></label></li>
+</ul>
+<h2 id="week4-s1">일별 학습</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>요일</th>
+<th>이론 (읽고 이해)</th>
+<th>실습 (손으로 해 보기)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>월</td>
+<td>LLM이란: 다음 단어를 예측하는 모델, 토큰, 환각</td>
+<td>같은 질문을 여러 번 던져 답이 달라지는 것 관찰</td>
+</tr>
+<tr>
+<td>화</td>
+<td>API 개념: 요청과 응답, API 키, 토큰 기준 요금</td>
+<td>API 키를 환경변수로 등록하고 첫 호출</td>
+</tr>
+<tr>
+<td>수</td>
+<td>프롬프트 구조: 역할, 맥락, 규칙, 출력 형식</td>
+<td>지출 설명을 항목으로 분류하는 프롬프트 작성</td>
+</tr>
+<tr>
+<td>목</td>
+<td>구조화된 출력: JSON으로 받고 검증하기</td>
+<td>분류 결과를 JSON으로 받아 표에 붙이기</td>
+</tr>
+<tr>
+<td>금</td>
+<td>한계와 보안: 환각, 개인정보, 사람의 최종 검토</td>
+<td>민감 정보 제외 규칙 정하고 검토 단계 넣기</td>
+</tr>
+<tr>
+<td>토</td>
+<td>전체 흐름 통합: 읽기 → 점검 → 요약 → 저장</td>
+<td>week4_ai_summary.py 실행</td>
+</tr>
+<tr>
+<td>일</td>
+<td>머신러닝·딥러닝 개념 한 장 정리: 학습, 분류, 과적합 (부록 A)</td>
+<td>4주 회고, 내 실제 업무 중 다음 자동화 후보 3개 적기</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="week4-s2">개념 정리</h2>
+<h3>설계 원칙: 코드는 계산, AI는 언어</h3>
+<p>4주차에서 가장 중요한 한 줄입니다. <strong>정확해야 하는 일(계산, 규칙 판정, 합계)은 코드가 하고, 말을 다루는 일(분류, 요약, 문장 작성)은 AI가 합니다.</strong> 코드는 같은 입력에 항상 같은 결과를 내지만, AI는 그럴듯한 답을 만들 뿐 계산을 보장하지 않습니다. 그래서 3주차까지 만든 점검 결과(숫자, 위반 여부)는 코드가 확정하고, AI는 그 결과를 사람이 읽기 좋은 문장으로 바꾸는 역할만 맡깁니다.</p>
+<h3>LLM이란</h3>
+<p>LLM(대규모 언어 모델)은 방대한 글을 학습해서 <strong>"지금까지의 글 다음에 올 가장 알맞은 조각"을 하나씩 예측</strong>하는 모델입니다. 글을 정리하고 분류하고 쓰는 일에 뛰어난 이유이자, 사실이 아닌 내용을 자신 있게 쓰는 <strong>환각(hallucination)</strong> 이 생기는 이유입니다. 모델은 "사실을 조회"하는 것이 아니라 "그럴듯한 문장을 생성"합니다.</p>
+<ul>
+<li><strong>토큰</strong>: 모델이 글을 읽는 단위(단어나 글자 조각). 한 번에 처리할 수 있는 길이 한도와 API 요금이 모두 토큰 기준입니다. 한국어는 같은 내용이라도 영어보다 토큰이 더 많이 쓰이는 경향이 있습니다.</li>
+<li><strong>컨텍스트 윈도우</strong>: 모델이 한 번에 읽을 수 있는 양. 이 안에 들어간 내용만 모델이 알고 답합니다.</li>
+<li><strong>같은 질문에도 답이 조금씩 달라질 수 있습니다.</strong> 자동화에서는 "JSON으로만 출력"처럼 출력 형식을 엄격히 정해서 이 흔들림을 줄입니다.</li>
+</ul>
+<h3>API란</h3>
+<p>API는 <strong>프로그램이 다른 프로그램에게 일을 시키는 창구</strong>입니다. 식당에 비유하면 손님(내 코드)이 주문서(요청)를 내면 주방(AI 모델)이 요리(응답)를 내보냅니다. 웹의 채팅 화면 대신 내 코드가 직접 주문하므로, 엑셀을 읽은 결과를 바로 넘기고 결과를 바로 파일로 저장할 수 있습니다.</p>
+<ul>
+<li><strong>API 키</strong>: 내 계정으로 호출하는 사용자 증명이자 <strong>청구서 주소</strong>입니다. 비밀번호처럼 다루세요. 코드 파일, 메신저, 깃허브에 올리면 안 되고, 환경변수(<code>ANTHROPIC_API_KEY</code>)에 넣어 코드가 읽게 합니다. 유출되면 즉시 키를 폐기하고 새로 발급합니다.</li>
+<li><strong>요금</strong>: 보낸 글과 받은 글의 토큰 수만큼 부과됩니다. 연습 때는 몇 건으로 작게 시작하세요.</li>
+<li><strong>대화 기억이 없습니다</strong>: 매 호출은 독립적이어서 필요한 맥락(규칙, 데이터)을 매번 함께 보내야 합니다.</li>
+</ul>
+<pre><code class="language-python">import anthropic
+client = anthropic.Anthropic()     # 환경변수의 키를 자동으로 읽음
+
+res = client.messages.create(
+    model=&quot;claude-sonnet-5-5&quot;,      # 사용할 모델
+    max_tokens=800,                 # 답변 길이 상한
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;...프롬프트...&quot;}],
+)
+print(res.content[0].text)          # 답변 글
+</code></pre>
+<h3>프롬프트 구조</h3>
+<p>프롬프트는 AI에게 주는 <strong>업무 지시서</strong>입니다. 신입 직원에게 일을 맡길 때처럼, 모호하게 "요약해 줘"라고 하기보다 아래 다섯 가지를 갖추면 결과가 안정됩니다.</p>
+<ol>
+<li><strong>역할</strong>: "너는 정산 점검 보조원이다"</li>
+<li><strong>맥락·데이터</strong>: 판단 근거가 되는 자료를 직접 붙여 준다 (모델이 지어내지 않게)</li>
+<li><strong>규칙</strong>: "주어진 데이터만 근거로 삼고, 없는 사실을 쓰지 마라"</li>
+<li><strong>출력 형식</strong>: "제목 1줄, 목록, 요청 사항 1~2줄 / 300자 안팎"</li>
+<li><strong>예시</strong>: 원하는 결과를 한두 개 보여 준다 (가장 강력한 방법)</li>
+</ol>
+<p>나쁜 예: <code>이 지출 내역 정리해서 메일 써줘</code></p>
+<p>좋은 예: <code>너는 정산 점검 보조원이다. 아래 JSON은 확인이 필요한 지출 목록이다. 담당자에게 보낼 메일 초안을 제목 1줄, 건별 목록, 요청 1~2줄로 써라. 목록에 없는 내용은 쓰지 마라.</code></p>
+<h3>구조화된 출력: JSON</h3>
+<p>코드가 AI의 답을 이어서 처리하려면 <strong>글이 아니라 정해진 형식</strong>으로 받아야 합니다. 가장 흔한 형식이 JSON입니다. 딕셔너리와 리스트를 글로 쓴 것이라고 생각하세요.</p>
+<pre><code class="language-python">import json
+items = json.loads(res.content[0].text)   # 글 → 파이썬 리스트/딕셔너리
+</code></pre>
+<p>AI의 답이 항상 올바른 JSON이라는 보장은 없으므로 두 가지를 반드시 합니다. 첫째, <code>try/except</code>로 파싱 실패를 잡아 <strong>한 번 더 시도하거나 사람에게 알립니다.</strong> 둘째, 값이 허용 범위인지 검사합니다(예: 문제 유형이 <code>한도초과|증빙누락|증빙부적합</code> 중 하나인지). 코드로 검증해야 하는 이유는 AI가 "그럴듯하지만 틀린" 값을 낼 수 있기 때문입니다.</p>
+<h3>한계와 안전한 사용</h3>
+<ul>
+<li><strong>환각</strong>: 판단 근거 데이터를 프롬프트에 직접 넣고, "모르면 모른다고 써라"를 지시하고, 숫자는 AI가 새로 쓰게 하지 말고 코드가 계산한 값을 그대로 쓰게 합니다.</li>
+<li><strong>사람의 최종 검토</strong>: 메일 발송, 정산 판정처럼 결과가 상대에게 영향을 주는 단계는 초안까지만 자동화하고 <strong>사람이 읽고 보냅니다.</strong></li>
+<li><strong>프롬프트 인젝션</strong>: 엑셀 설명 칸에 "앞의 지시를 무시하고 …" 같은 문장이 들어 있을 수 있습니다. 외부에서 온 데이터는 "지시가 아니라 자료"라고 프롬프트에 명시하고, AI의 출력을 그대로 실행하거나 발송하지 않습니다.</li>
+<li><strong>정보 보안</strong>: API로 보낸 내용은 외부 서비스로 전달됩니다. 개인정보(주민번호, 계좌, 연락처 등)와 기관 내부 자료는 <strong>보내기 전에 소속 기관의 정보보안 지침을 확인</strong>하고, 꼭 필요한 열만 골라 보내며, 가능하면 마스킹하세요.</li>
+<li><strong>비용과 한도</strong>: 건수가 많으면 호출 횟수와 토큰이 곧 비용입니다. 규칙으로 걸러낸 <strong>의심 건만</strong> AI에 보내면 비용도 줄고 정확도도 올라갑니다.</li>
+</ul>
+<h3>전체 흐름 한눈에</h3>
+<p>엑셀 읽기(pandas) → 규칙 점검(코드가 확정) → 의심 건만 AI에 전달 → 분류·요약문 생성(AI) → 파일 저장 → <strong>사람이 검토 후 발송</strong>. 4주 동안 배운 모든 개념이 이 한 줄에 들어 있습니다.</p>
+<h2 id="week4-s3">복습 질문</h2>
+<details><summary>1. 계산과 규칙 판정은 코드와 AI 중 누가 맡아야 하나요?</summary><p>코드입니다. 코드는 같은 입력에 항상 같은 결과를 내지만, AI는 계산을 보장하지 않습니다. AI는 분류, 요약, 문장 작성을 맡습니다.</p></details>
+
+<details><summary>2. API 키는 어떻게 관리해야 하나요?</summary><p>코드 파일에 직접 쓰지 않고 환경변수로 등록합니다. 메신저나 깃허브에 올리면 안 되고, 유출되면 즉시 폐기하고 새로 발급합니다.</p></details>
+
+<details><summary>3. AI에게 JSON으로 답을 받을 때 반드시 해야 할 두 가지는 무엇인가요?</summary><p>파싱 실패를 잡아 재시도하거나 사람에게 알리는 것, 그리고 값이 허용된 범위 안에 있는지 코드로 검증하는 것입니다.</p></details>
+
+<details><summary>4. 점검에서 걸린 의심 건만 AI에 보내는 이유는 무엇인가요?</summary><p>비용이 줄고, 정확도가 오르고, 외부로 나가는 정보도 최소화되기 때문입니다.</p></details><h2 id="week4-s4">실습 코드</h2>
+<p>압축 파일의 <code>practice</code> 폴더에 있는 것과 같은 코드입니다. 읽으면서 줄마다 무슨 일을 하는지 따라가 보세요.</p>
+<h3>week4/week4_ai_summary.py</h3><p>점검 결과를 Claude API로 분류·요약해 메일 초안을 만듭니다. API 키가 필요합니다.</p><pre><code>&quot;&quot;&quot;4주차: 점검 결과를 Claude API로 요약해 담당자용 메일 초안을 만든다.
+
+준비
+  1) pip install anthropic pandas openpyxl
+  2) API 키를 환경변수로 등록 (코드에 직접 쓰지 마세요)
+       Mac/Linux: export ANTHROPIC_API_KEY=&quot;발급받은 키&quot;
+       Windows:   setx ANTHROPIC_API_KEY &quot;발급받은 키&quot;
+  3) week3/week3_rules_check.py 를 먼저 실행해 week3_issues.xlsx 를 만들어 두기
+
+실행: python week4/week4_ai_summary.py
+
+주의: 이 연습은 가상 데이터용입니다. 실제 업무 자료를 외부 API로 보내기 전에는
+소속 기관의 정보보안 지침을 확인하고, 개인정보·계좌 등은 빼고 보내세요.
+&quot;&quot;&quot;
+import json
+from pathlib import Path
+import anthropic
+import pandas as pd
+
+BASE = Path(__file__).resolve().parent.parent
+MODEL = &quot;claude-sonnet-5-5&quot;
+client = anthropic.Anthropic()  # ANTHROPIC_API_KEY 환경변수를 자동으로 읽는다
+
+issues = pd.read_excel(BASE / &quot;week3_issues.xlsx&quot;)
+rows = issues[[&quot;지출일&quot;, &quot;사업명&quot;, &quot;항목&quot;, &quot;금액&quot;, &quot;설명&quot;, &quot;한도초과&quot;, &quot;증빙누락&quot;, &quot;증빙부적합&quot;]]
+data = rows.to_json(orient=&quot;records&quot;, force_ascii=False)
+
+# 1) 구조화된 출력: 항목별로 위반 유형을 JSON으로 분류하게 한다.
+classify_prompt = f&quot;&quot;&quot;너는 정산 점검 보조원이다. 아래 JSON은 규칙 점검에서 걸린 지출 목록이다.
+각 건마다 아래 형식의 JSON 배열만 출력하라. 설명 문장은 쓰지 마라.
+[{{&quot;설명&quot;: &quot;...&quot;, &quot;문제&quot;: &quot;한도초과|증빙누락|증빙부적합&quot;, &quot;조치&quot;: &quot;담당자가 할 일 한 문장&quot;}}]
+없는 사실을 지어내지 말고, 주어진 데이터만 근거로 삼아라.
+
+{data}&quot;&quot;&quot;
+res = client.messages.create(model=MODEL, max_tokens=1500, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: classify_prompt}])
+text = res.content[0].text.strip().removeprefix(&quot;```json&quot;).removesuffix(&quot;```&quot;).strip()
+items = json.loads(text)  # 형식이 틀리면 여기서 에러 -&gt; 프롬프트를 고쳐서 다시 시도
+
+# 2) 요약 메일 초안
+mail_prompt = f&quot;&quot;&quot;아래 점검 결과로 사업 담당자에게 보낼 메일 초안을 써라.
+- 형식: 제목 1줄, 인사 1줄, 확인이 필요한 건 목록(건별 한 줄), 요청 사항 1~2줄
+- 어조: 정중하고 간결하게, 300자 안팎
+- 금액은 천 단위 쉼표를 쓰고, 목록에 없는 내용은 쓰지 마라.
+
+{json.dumps(items, ensure_ascii=False)}&quot;&quot;&quot;
+res = client.messages.create(model=MODEL, max_tokens=800, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: mail_prompt}])
+draft = res.content[0].text
+
+out = BASE / &quot;week4_mail_draft.txt&quot;
+out.write_text(draft, encoding=&quot;utf-8&quot;)
+print(draft)
+print(f&quot;\n저장: {out}  (발송 전에 반드시 사람이 검토하세요)&quot;)
+</code></pre><nav class="pager"><button type="button" data-go="week3"><small>이전</small>3주차 규칙 검사와 SQL 맛보기</button><button type="button" data-go="appA"><small>다음</small>부록 A 머신러닝·딥러닝 한 장 정리</button></nav></article>
+<article class="chapter" id="ch-appA" data-id="appA" hidden><div class="eyebrow">부록 A</div><h1>머신러닝·딥러닝 한 장 정리</h1>
+<p>직접 모델을 만들 일은 드물지만, 개념을 알면 외부 업체나 개발자와 자동화를 논의할 때 "이건 규칙으로 되는 일인가, AI가 필요한 일인가"를 스스로 가릴 수 있습니다.</p>
+<h2 id="appA-s0">포함 관계</h2>
+<p><strong>AI ⊃ 머신러닝 ⊃ 딥러닝</strong> 순서로 범위가 좁아집니다. 4주차에서 쓴 LLM(Claude 같은 모델)은 딥러닝으로 만든 모델의 한 종류입니다.</p>
+<h2 id="appA-s1">기존 프로그래밍 vs 머신러닝</h2>
+<ul>
+<li><strong>기존 프로그래밍</strong>: 사람이 규칙을 쓰고, 컴퓨터가 규칙대로 결과를 낸다. (3주차의 한도·증빙 규칙 검사)</li>
+<li><strong>머신러닝</strong>: 사람이 <strong>데이터와 정답</strong>을 주면, 컴퓨터가 규칙을 스스로 찾아낸다. 규칙을 글로 쓰기 어려운 일(사진 속 물체 알아보기, 스팸 메일 거르기)에 알맞습니다.</li>
+</ul>
+<h2 id="appA-s2">학습 방식 세 가지</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>종류</th>
+<th>정답 여부</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>지도학습</td>
+<td>정답이 붙은 데이터로 학습</td>
+<td>지출 설명을 보고 항목 분류, 다음 달 집행액 예측</td>
+</tr>
+<tr>
+<td>비지도학습</td>
+<td>정답 없이 비슷한 것끼리 묶기</td>
+<td>비슷한 성격의 사업끼리 그룹화</td>
+</tr>
+<tr>
+<td>강화학습</td>
+<td>시도와 보상으로 학습</td>
+<td>게임·로봇 제어</td>
+</tr>
+</tbody>
+</table></div>
+<p>지도학습은 맞히는 대상에 따라 <strong>분류</strong>(종류 맞히기: 증빙 적합/부적합)와 <strong>회귀</strong>(숫자 맞히기: 집행액 예측)로 나뉩니다.</p>
+<h2 id="appA-s3">학습 과정과 과적합</h2>
+<ol>
+<li><strong>데이터 준비</strong>: 입력과 정답이 짝을 이룬 예시를 모은다</li>
+<li><strong>학습</strong>: 모델이 오차를 줄이는 방향으로 스스로 조정한다</li>
+<li><strong>평가</strong>: 학습에 쓰지 않은 <strong>새 데이터</strong>로 시험한다</li>
+<li><strong>사용</strong>: 실제 업무 데이터에 적용하고 계속 점검한다</li>
+</ol>
+<p><strong>과적합(overfitting)</strong> 은 연습문제 답만 외워서 실전 시험은 못 보는 상태입니다. 학습 데이터에서는 거의 완벽한데 새 데이터에서는 틀립니다. 그래서 데이터를 학습용과 평가용으로 나눠 놓고 평가용으로만 성적을 확인합니다.</p>
+<h2 id="appA-s4">딥러닝</h2>
+<p>사람 뇌의 신경망을 흉내 낸 <strong>층이 아주 많은 모델</strong>로 학습하는 방식입니다. 이미지·음성·언어처럼 규칙을 사람이 만들기 어려운 데이터에 강하지만, 대량의 데이터와 연산 자원이 필요합니다. 엑셀 같은 <strong>표 형태 데이터는 전통적인 머신러닝이나 규칙만으로 충분한 경우가 많습니다.</strong></p>
+<h2 id="appA-s5">업무에서는 무엇을 쓸까</h2>
+<ol>
+<li>규칙으로 쓸 수 있으면 <strong>규칙(코드)</strong> 이 가장 정확하고 설명하기 쉽습니다. (3주차)</li>
+<li>글을 분류·요약·작성하는 일은 <strong>LLM API</strong>로 해결합니다. 모델을 직접 만들 필요가 없습니다. (4주차)</li>
+<li>직접 모델을 학습하는 일은 <strong>정답이 붙은 데이터가 충분히 쌓였고</strong> 위 두 방법으로 풀리지 않을 때 검토합니다.</li>
+</ol><nav class="pager"><button type="button" data-go="week4"><small>이전</small>4주차 AI API로 자동화 완성하기</button><button type="button" data-go="appB"><small>다음</small>부록 B 용어 사전</button></nav></article>
+<article class="chapter" id="ch-appB" data-id="appB" hidden><div class="eyebrow">부록 B</div><h1>용어 사전</h1>
+<p>모르는 말이 나오면 여기서 찾으세요. 처음 나온 장은 오른쪽 열에 적었습니다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>용어</th>
+<th>한 줄 설명</th>
+<th>장</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>변수</td>
+<td>값에 이름표를 붙여 담아 두는 상자</td>
+<td>1주차</td>
+</tr>
+<tr>
+<td>자료형</td>
+<td>값의 종류 (정수, 실수, 문자열, True/False)</td>
+<td>1주차</td>
+</tr>
+<tr>
+<td>리스트</td>
+<td>순서가 있는 값의 묶음. 번호는 0부터</td>
+<td>1주차</td>
+</tr>
+<tr>
+<td>딕셔너리</td>
+<td>이름표(키)로 값을 찾는 묶음</td>
+<td>1주차</td>
+</tr>
+<tr>
+<td>함수</td>
+<td>입력을 받아 결과를 돌려주는 재사용 가능한 상자</td>
+<td>1주차</td>
+</tr>
+<tr>
+<td>라이브러리</td>
+<td>남이 만들어 둔 도구 모음 (pandas, openpyxl 등)</td>
+<td>1주차</td>
+</tr>
+<tr>
+<td>DataFrame</td>
+<td>pandas의 표. 엑셀 시트 하나에 해당</td>
+<td>2주차</td>
+</tr>
+<tr>
+<td>인덱스</td>
+<td>표의 행 번호표</td>
+<td>2주차</td>
+</tr>
+<tr>
+<td>결측치(NaN)</td>
+<td>비어 있는 값</td>
+<td>2주차</td>
+</tr>
+<tr>
+<td>groupby</td>
+<td>같은 값끼리 묶어 합계·평균을 구하는 연산 (피벗 테이블)</td>
+<td>2주차</td>
+</tr>
+<tr>
+<td>merge / JOIN</td>
+<td>공통 열(키)로 두 표를 연결하는 연산 (VLOOKUP)</td>
+<td>3주차</td>
+</tr>
+<tr>
+<td>데이터베이스</td>
+<td>표를 안전하게 보관하고 빠르게 조회하는 저장소</td>
+<td>3주차</td>
+</tr>
+<tr>
+<td>SQL</td>
+<td>데이터베이스에 데이터를 꺼내 달라고 묻는 언어</td>
+<td>3주차</td>
+</tr>
+<tr>
+<td>기본키</td>
+<td>행마다 겹치지 않는 고유 번호</td>
+<td>3주차</td>
+</tr>
+<tr>
+<td>API</td>
+<td>프로그램이 다른 프로그램에게 일을 시키는 창구</td>
+<td>4주차</td>
+</tr>
+<tr>
+<td>API 키</td>
+<td>API를 쓸 수 있게 해 주는 비밀 열쇠 (비밀번호처럼 관리)</td>
+<td>4주차</td>
+</tr>
+<tr>
+<td>토큰</td>
+<td>AI 모델이 글을 읽는 단위. 요금과 길이 한도의 기준</td>
+<td>4주차</td>
+</tr>
+<tr>
+<td>프롬프트</td>
+<td>AI에게 주는 지시서</td>
+<td>4주차</td>
+</tr>
+<tr>
+<td>환각</td>
+<td>AI가 사실이 아닌 내용을 그럴듯하게 만들어 내는 현상</td>
+<td>4주차</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>딕셔너리와 리스트를 글로 쓴 형식. 프로그램 간 데이터 교환에 쓰임</td>
+<td>4주차</td>
+</tr>
+<tr>
+<td>지도학습</td>
+<td>정답이 붙은 데이터로 학습하는 머신러닝</td>
+<td>부록 A</td>
+</tr>
+<tr>
+<td>과적합</td>
+<td>학습 데이터만 외워 새 데이터에서는 틀리는 상태</td>
+<td>부록 A</td>
+</tr>
+</tbody>
+</table></div><nav class="pager"><button type="button" data-go="appA"><small>이전</small>부록 A 머신러닝·딥러닝 한 장 정리</button></nav></article></main>
+</div>
+<script>
+(function(){
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var ls={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+var ids=$$('.chapter').map(function(c){return c.dataset.id});
+var todayRow=null,todayWeek=null;
+
+/* 일별 학습 표: 완료 열 추가 */
+$$('.chapter table').forEach(function(t){
+  var ths=$$('thead th',t);
+  if(!ths[0]||ths[0].textContent.trim()!=='요일')return;
+  t.classList.add('day');
+  var labels=ths.map(function(h){return h.textContent.trim()});
+  var th=document.createElement('th');th.textContent='완료';ths[0].parentNode.appendChild(th);
+  $$('tbody tr',t).forEach(function(tr){
+    var tds=$$('td',tr);
+    tds.forEach(function(td,i){td.setAttribute('data-label',labels[i]||'')});
+    var td=document.createElement('td');td.className='done';
+    td.innerHTML='<input type="checkbox" class="chk" aria-label="'+tds[0].textContent.trim()+'요일 완료">';
+    tr.appendChild(td);
+  });
+});
+
+/* 체크 상태 저장 */
+function updateProgress(){
+  var total=0,done=0;
+  ids.forEach(function(id){
+    var cbs=$$('#ch-'+id+' input.chk'),d=cbs.filter(function(c){return c.checked}).length;
+    total+=cbs.length;done+=d;
+    var el=$('[data-count="'+id+'"]');
+    if(el)el.textContent=cbs.length?d+' / '+cbs.length+' 완료':'';
+  });
+  $('#prog').innerHTML='<span class="lbl">진행 </span><b>'+done+'</b> / '+total;
+}
+ids.forEach(function(id){
+  $$('#ch-'+id+' input.chk').forEach(function(cb,i){
+    cb.dataset.k='c:'+id+':'+i;
+    cb.checked=ls.get(cb.dataset.k)==='1';
+    cb.addEventListener('change',function(){ls.set(cb.dataset.k,cb.checked?'1':'0');updateProgress()});
+  });
+});
+
+/* 코드 복사 */
+$$('pre').forEach(function(pre){
+  var b=document.createElement('button');b.className='copy';b.type='button';b.textContent='복사';
+  b.addEventListener('click',function(){
+    var code=$('code',pre),txt=code.innerText;
+    var fin=function(m){b.textContent=m;setTimeout(function(){b.textContent='복사'},1500)};
+    var fallback=function(){var r=document.createRange();r.selectNodeContents(code);var s=window.getSelection();s.removeAllRanges();s.addRange(r);fin('선택됨')};
+    try{navigator.clipboard.writeText(txt).then(function(){fin('복사됨')},fallback)}catch(e){fallback()}
+  });
+  pre.appendChild(b);
+});
+
+/* 장 전환 */
+function show(id,keepScroll){
+  if(ids.indexOf(id)<0)id='start';
+  $$('.chapter').forEach(function(c){c.hidden=c.dataset.id!==id});
+  $$('.nav a').forEach(function(a){a.classList.toggle('on',a.dataset.id===id)});
+  ls.set('last',id);
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+  $('#side').classList.remove('open');$('#menuBtn').setAttribute('aria-expanded','false');
+  if(!keepScroll)window.scrollTo(0,0);
+}
+$$('.nav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();show(a.dataset.id)})});
+$$('[data-go]').forEach(function(b){b.addEventListener('click',function(){show(b.dataset.go)})});
+$$('.chips button').forEach(function(b){b.addEventListener('click',function(){var t=document.getElementById(b.dataset.target);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
+$('#menuBtn').addEventListener('click',function(){var o=$('#side').classList.toggle('open');this.setAttribute('aria-expanded',o?'true':'false')});
+window.addEventListener('hashchange',function(){show(location.hash.slice(1))});
+
+/* 오늘 카드 */
+function renderToday(){
+  var el=$('#today');if(!el)return;
+  var s=ls.get('start')||'2026-10-26',p=s.split('-').map(Number);
+  var st=new Date(p[0],p[1]-1,p[2]),now=new Date(),t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  var n=Math.round((t0-st)/864e5),main='',detail='',btn='';
+  $$('tr.now').forEach(function(r){r.classList.remove('now')});
+  todayRow=null;todayWeek=null;
+  if(isNaN(n)){main='시작일을 확인하세요.'}
+  else if(n<0){main='시작까지 '+(-n)+'일 남았습니다.';$('#hdrToday').textContent='오늘'}
+  else if(n>27){main='4주 과정을 마쳤습니다.';detail='<p>복습 질문과 부록으로 정리하고, 실제 업무 하나를 골라 자동화해 보세요.</p>';$('#hdrToday').textContent='오늘'}
+  else{
+    var w=Math.floor(n/7)+1,d=n%7,row=$$('#ch-week'+w+' table.day tbody tr')[d];
+    if(row){
+      var c=$$('td',row);row.classList.add('now');todayRow=row;todayWeek='week'+w;
+      main=(n+1)+'일째 · '+w+'주차 '+c[0].textContent.trim()+'요일';
+      detail='<dl><dt>이론</dt><dd>'+c[1].textContent+'</dd><dt>실습</dt><dd>'+c[2].textContent+'</dd></dl>';
+      btn='<button class="go" type="button" id="goToday">'+w+'주차 열어서 공부하기</button>';
+      $('#hdrToday').textContent='오늘 '+(n+1)+'일째';
+    }
+  }
+  el.innerHTML='<h2>오늘의 학습</h2><p class="t-main">'+main+'</p>'+detail+
+    '<div class="row">'+btn+'<label>시작일 <input type="date" id="startDate" value="'+s+'"></label></div>';
+  var g=$('#goToday');
+  if(g)g.addEventListener('click',goToday);
+  $('#startDate').addEventListener('change',function(e){if(e.target.value){ls.set('start',e.target.value);renderToday()}});
+}
+function goToday(){
+  if(todayWeek){show(todayWeek,true);if(todayRow)todayRow.scrollIntoView({block:'center'})}
+  else show('start');
+}
+$('#hdrToday').addEventListener('click',function(){if(todayWeek)goToday();else{show('start')}});
+
+renderToday();updateProgress();
+var h=location.hash.slice(1);
+show(ids.indexOf(h)>=0?h:(ls.get('last')||'start'));
+
+})();
+</script>
+
+</body>
+</html>
